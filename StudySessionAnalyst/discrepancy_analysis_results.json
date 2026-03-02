@@ -1,0 +1,71 @@
+{
+  "timestamp": "2026-03-02T18:31:25.130419Z",
+  "model": "claude-3-5-sonnet",
+  "agent": "StudySessionDiscrepancyAnalyst",
+  "result": {
+    "prediction": {
+      "pred_focus_score": 7.8,
+      "pred_label": "GOOD",
+      "reasoning_summary": "Sensor patterns suggest mostly stable attention with low movement and moderate environmental noise.",
+      "key_evidence": [
+        "Average heart rate remained within focused range",
+        "Noise level stayed mostly below disruptive threshold",
+        "Movement stayed low indicating seated study behavior"
+      ]
+    },
+    "self_report": {
+      "self_focus_score": 5.6,
+      "agreement": 2,
+      "report_confidence": 82.0,
+      "reason_tag": "MENTAL_FATIGUE",
+      "feedback_text": "I looked focused externally, but I felt mentally tired and my mind wandered during reading-heavy parts."
+    },
+    "discrepancy_metrics": {
+      "predicted_label_from_score": "GOOD",
+      "self_report_label": "MODERATE",
+      "score_gap": 2.2,
+      "normalized_gap": 0.22,
+      "label_mismatch": true,
+      "agreement_discrepancy": 0.75,
+      "confidence_factor": 0.82,
+      "discrepancy_score": 55.45,
+      "discrepancy_level": "MEDIUM"
+    },
+    "llm_analysis": {
+      "summary": "Model detected physical focus signals but missed internal mental fatigue state, leading to overestimation of study effectiveness",
+      "root_causes": [
+        "Model relies heavily on external behavioral metrics",
+        "Mental fatigue not easily captured by current sensors",
+        "Reading tasks may show different physical vs mental engagement patterns"
+      ],
+      "evidence_alignment": {
+        "model_supports": [
+          "Low physical movement consistent with studying",
+          "Heart rate within expected range",
+          "Environmental conditions were suitable"
+        ],
+        "user_supports": [
+          "High self-report confidence (82%)",
+          "Specific mention of mental fatigue",
+          "Clear description of mind wandering during reading"
+        ]
+      },
+      "reliability_assessment": {
+        "model_reliability": "MEDIUM",
+        "self_report_reliability": "HIGH",
+        "confidence_note": "User's high confidence and specific feedback suggests reliable self-assessment, while model shows blind spot for mental states"
+      },
+      "recommended_actions": [
+        "Add cognitive load estimation features to model",
+        "Implement periodic mental fatigue check-ins",
+        "Develop reading-specific focus detection parameters",
+        "Consider break recommendations based on mental fatigue signals"
+      ],
+      "follow_up_questions": [
+        "What specific types of reading material were most challenging to focus on?",
+        "Were there any physical signs that preceded mental fatigue?"
+      ]
+    },
+    "raw_llm_response": "{\n  \"summary\": \"Model detected physical focus signals but missed internal mental fatigue state, leading to overestimation of study effectiveness\",\n  \"root_causes\": [\n    \"Model relies heavily on external behavioral metrics\",\n    \"Mental fatigue not easily captured by current sensors\",\n    \"Reading tasks may show different physical vs mental engagement patterns\"\n  ],\n  \"evidence_alignment\": {\n    \"model_supports\": [\n      \"Low physical movement consistent with studying\",\n      \"Heart rate within expected range\",\n      \"Environmental conditions were suitable\"\n    ],\n    \"user_supports\": [\n      \"High self-report confidence (82%)\",\n      \"Specific mention of mental fatigue\",\n      \"Clear description of mind wandering during reading\"\n    ]\n  },\n  \"reliability_assessment\": {\n    \"model_reliability\": \"MEDIUM\",\n    \"self_report_reliability\": \"HIGH\",\n    \"confidence_note\": \"User's high confidence and specific feedback suggests reliable self-assessment, while model shows blind spot for mental states\"\n  },\n  \"recommended_actions\": [\n    \"Add cognitive load estimation features to model\",\n    \"Implement periodic mental fatigue check-ins\",\n    \"Develop reading-specific focus detection parameters\",\n    \"Consider break recommendations based on mental fatigue signals\"\n  ],\n  \"follow_up_questions\": [\n    \"What specific types of reading material were most challenging to focus on?\",\n    \"Were there any physical signs that preceded mental fatigue?\"\n  ]\n}"
+  }
+}

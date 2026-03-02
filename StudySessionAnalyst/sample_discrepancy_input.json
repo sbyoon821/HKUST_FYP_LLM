@@ -1,0 +1,19 @@
+{
+  "prediction": {
+    "pred_focus_score": 7.8,
+    "pred_label": "GOOD",
+    "reasoning_summary": "Sensor patterns suggest mostly stable attention with low movement and moderate environmental noise.",
+    "key_evidence": [
+      "Average heart rate remained within focused range",
+      "Noise level stayed mostly below disruptive threshold",
+      "Movement stayed low indicating seated study behavior"
+    ]
+  },
+  "self_report": {
+    "self_focus_score": 5.6,
+    "agreement": 2,
+    "report_confidence": 82,
+    "reason_tag": "MENTAL_FATIGUE",
+    "feedback_text": "I looked focused externally, but I felt mentally tired and my mind wandered during reading-heavy parts."
+  }
+}

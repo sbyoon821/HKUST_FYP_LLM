@@ -6,7 +6,7 @@ import json
 import os
 from dotenv import load_dotenv
 from snowflake.snowpark import Session
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 def calculate_sensor_averages(sensor_data):
@@ -66,105 +66,27 @@ def analyze_concentration(sensor_data, model="claude-3-5-sonnet", session=None):
             sensor_summary += f"\n{time_str}:"
         sensor_summary += f" {reading['sensor_type']}={reading['value']}{reading['unit']}"
     
-    # Build Chain of Thought prompt
-    prompt = f"""You are an expert study concentration analyst. Analyze student sensor data to assess concentration levels and provide helpful feedback.
+    # Build concise analysis prompt
+    prompt = f"""You are a study concentration analyst. Analyze sensor data and provide a brief assessment.
 
-**SENSOR DATA OVERVIEW:**
-- Duration: {stats['num_readings']} minutes of study session
+**SENSOR DATA:**
+- Duration: {stats['num_readings']} minutes
 - Average Heart Rate: {stats['avg_heart_rate']:.1f} bpm
 - Average Noise Level: {stats['avg_noise_level']:.1f} dB
-- Average Steps per Minute: {stats['avg_steps']:.1f} steps
+- Average Steps/min: {stats['avg_steps']:.1f} steps
 
-**DETAILED SENSOR READINGS:**{sensor_summary}
+**THRESHOLDS:**
+Heart Rate: 60-80 (optimal), 80-90 (engaged), >90 (stressed), <60 (drowsy)
+Noise: 30-45 dB (ideal), 45-60 dB (moderate), >60 dB (disruptive)
+Movement: 0-20 (focused), 20-40 (breaks), 40-60 (restless), >60 (active)
 
-**NORMAL CONCENTRATION THRESHOLDS:**
-1. Heart Rate:
-   - Optimal focused state: 60-80 bpm (calm but alert)
-   - Slightly elevated: 80-90 bpm (engaged, possibly stressed)
-   - High: >90 bpm (stress, anxiety, or physical activity interfering)
-   - Low: <60 bpm (possibly drowsy or very relaxed)
-
-2. Noise Level:
-   - Optimal quiet: 30-45 dB (library-like, minimal distractions)
-   - Moderate: 45-60 dB (some background noise, manageable)
-   - Disruptive: >60 dB (conversation level, likely distracting)
-
-3. Movement (Steps per Minute):
-   - Focused studying: 0-20 steps (minimal movement, seated)
-   - Occasional breaks: 20-40 steps (healthy micro-breaks)
-   - Frequent movement: 40-60 steps (restlessness, difficulty focusing)
-   - High activity: >60 steps (not studying, walking around)
-
-**TASK: Use Compositional Chain-of-Thought reasoning to analyze concentration level**
-
-Follow this compositional reasoning process to systematically analyze each modality before synthesizing insights:
-
-**PHASE 1: INDIVIDUAL MODALITY ANALYSIS**
-Analyze each sensor type independently to understand its individual contribution:
-
-1. **STEP 1 - Heart Rate Decomposition:**
-   - Compare average heart rate against optimal thresholds
-   - Identify any significant deviations (high/low) from normal ranges
-   - Note temporal patterns: Are there spikes, drops, or sustained elevations?
-   - Preliminary interpretation: What does this modality alone suggest about stress/alertness?
-
-2. **STEP 2 - Noise Environment Decomposition:**
-   - Compare average noise level against optimal thresholds
-   - Assess environmental quality: library-quiet vs. disruptive
-   - Note temporal patterns: Are there sudden noise spikes or sustained high levels?
-   - Preliminary interpretation: What does this modality alone suggest about environmental distractions?
-
-3. **STEP 3 - Movement Pattern Decomposition:**
-   - Compare average steps against optimal thresholds
-   - Assess movement type: focused stillness vs. restlessness vs. active breaks
-   - Note temporal patterns: Consistent movement or sporadic bursts?
-   - Preliminary interpretation: What does this modality alone suggest about physical engagement?
-
-**PHASE 2: CROSS-MODAL COMPOSITION**
-Synthesize insights across modalities to identify complex patterns:
-
-4. **STEP 4 - Identify Cross-Modal Correlations:**
-   - Temporal alignment: Do noise spikes coincide with heart rate increases?
-   - Behavioral patterns: Does movement correlate with environmental or physiological changes?
-   - Causal relationships: Does one modality appear to trigger changes in others?
-   - Example: "High noise → increased heart rate → restless movement" suggests environmental stress
-
-5. **STEP 5 - Compositional Concentration Assessment:**
-   - Synthesize findings from Steps 1-4 into a holistic view
-   - Determine overall concentration level: GOOD, MODERATE, or POOR
-   - Identify the primary factor(s) affecting concentration
-   - Explain how multiple modalities interact to support or undermine focus
-
-**PHASE 3: ACTIONABLE SYNTHESIS**
-
-6. **STEP 6 - Generate Personalized Recommendations:**
-   - Based on compositional analysis, identify root causes (not just symptoms)
-   - Provide specific recommendations targeting identified issues
-   - Acknowledge positive patterns to reinforce good habits
-   - Prioritize 2-3 most impactful interventions
-
-**FORMAT YOUR RESPONSE AS:**
-
-**Compositional Chain-of-Thought Analysis:**
-
-*Phase 1 - Individual Modality Analysis:*
-- Heart Rate: [Your analysis from Step 1]
-- Noise Environment: [Your analysis from Step 2]
-- Movement Pattern: [Your analysis from Step 3]
-
-*Phase 2 - Cross-Modal Composition:*
-- Correlations: [Your analysis from Step 4]
-- Holistic Assessment: [Your synthesis from Step 5]
-
-**Concentration Level:** [GOOD/MODERATE/POOR]
-
-**Primary Contributing Factors:**
-- [Factor 1 and how modalities interact]
-- [Factor 2 and how modalities interact]
-- [Factor 3 and how modalities interact]
-
-**Personalized Feedback:**
-[Helpful, encouraging feedback addressing the compositional insights with 2-3 specific actionable recommendations that target root causes identified through cross-modal analysis]"""
+**TASK:** Provide a concise assessment. Return JSON ONLY with this structure:
+{{
+  "concentration_level": "GOOD|MODERATE|POOR",
+  "summary": "1-2 sentence overall assessment",
+  "key_findings": ["finding 1", "finding 2"],
+  "recommendations": ["action 1", "action 2"]
+}}"""
     
     # Escape single quotes for SQL
     escaped_prompt = prompt.replace("'", "''")
@@ -248,10 +170,11 @@ def process_concentration_analysis(data_path, model="claude-3-5-sonnet", output_
         print(analysis)
         print("=" * 100)
         print()
+        print()
         
         # Save results
         result = {
-            "timestamp": datetime.utcnow().isoformat() + "Z",
+            "timestamp": datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'),
             "model": model,
             "sensor_statistics": stats,
             "analysis": analysis,
@@ -278,7 +201,7 @@ if __name__ == "__main__":
                         help='Path to sensor data JSON file')
     parser.add_argument('--model', type=str, default='claude-3-5-sonnet',
                         help='Model name to use (claude-3-5-sonnet, llama4-maverick, etc.)')
-    parser.add_argument('--output', type=str, default='concentration_analysis_results.json',
+    parser.add_argument('--output', type=str, default='CCoT/output/concentration_analysis_results.json',
                         help='Output file path')
     
     args = parser.parse_args()

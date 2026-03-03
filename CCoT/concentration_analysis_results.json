@@ -1,0 +1,104 @@
+{
+  "timestamp": "2026-03-03T07:47:40.923134Z",
+  "model": "claude-3-5-sonnet",
+  "sensor_statistics": {
+    "avg_heart_rate": 80.2,
+    "avg_noise_level": 48.6,
+    "avg_steps": 15.6,
+    "num_readings": 5
+  },
+  "concentration_score": 6,
+  "reasoning": "Heart rate averaged 80.2 bpm with concerning spike to 90 bpm at 09:03, coinciding with peak noise of 64 dB and elevated movement (32 steps/min). Cross-modal analysis shows environmental disruption at 09:02-09:03 triggered physiological stress response and restlessness, though recovery occurred by 09:04. Concentration assessed as MODERATE due to temporary environmental disruption affecting physiological state. Recommendations: 1) Identify and mitigate source of noise spike around 09:03, 2) Consider noise-canceling headphones when ambient noise exceeds 45 dB, 3) Practice deep breathing exercises when heart rate exceeds 85 bpm to maintain focus.",
+  "raw_sensor_data": [
+    {
+      "timestamp": "2026-02-22T09:00:00Z",
+      "sensor_type": "heart_rate",
+      "value": 72,
+      "unit": "bpm"
+    },
+    {
+      "timestamp": "2026-02-22T09:00:00Z",
+      "sensor_type": "noise_level",
+      "value": 38,
+      "unit": "dB"
+    },
+    {
+      "timestamp": "2026-02-22T09:00:00Z",
+      "sensor_type": "number_of_steps_past_minute",
+      "value": 6,
+      "unit": "steps"
+    },
+    {
+      "timestamp": "2026-02-22T09:01:00Z",
+      "sensor_type": "heart_rate",
+      "value": 78,
+      "unit": "bpm"
+    },
+    {
+      "timestamp": "2026-02-22T09:01:00Z",
+      "sensor_type": "noise_level",
+      "value": 44,
+      "unit": "dB"
+    },
+    {
+      "timestamp": "2026-02-22T09:01:00Z",
+      "sensor_type": "number_of_steps_past_minute",
+      "value": 10,
+      "unit": "steps"
+    },
+    {
+      "timestamp": "2026-02-22T09:02:00Z",
+      "sensor_type": "heart_rate",
+      "value": 85,
+      "unit": "bpm"
+    },
+    {
+      "timestamp": "2026-02-22T09:02:00Z",
+      "sensor_type": "noise_level",
+      "value": 55,
+      "unit": "dB"
+    },
+    {
+      "timestamp": "2026-02-22T09:02:00Z",
+      "sensor_type": "number_of_steps_past_minute",
+      "value": 18,
+      "unit": "steps"
+    },
+    {
+      "timestamp": "2026-02-22T09:03:00Z",
+      "sensor_type": "heart_rate",
+      "value": 90,
+      "unit": "bpm"
+    },
+    {
+      "timestamp": "2026-02-22T09:03:00Z",
+      "sensor_type": "noise_level",
+      "value": 64,
+      "unit": "dB"
+    },
+    {
+      "timestamp": "2026-02-22T09:03:00Z",
+      "sensor_type": "number_of_steps_past_minute",
+      "value": 32,
+      "unit": "steps"
+    },
+    {
+      "timestamp": "2026-02-22T09:04:00Z",
+      "sensor_type": "heart_rate",
+      "value": 76,
+      "unit": "bpm"
+    },
+    {
+      "timestamp": "2026-02-22T09:04:00Z",
+      "sensor_type": "noise_level",
+      "value": 42,
+      "unit": "dB"
+    },
+    {
+      "timestamp": "2026-02-22T09:04:00Z",
+      "sensor_type": "number_of_steps_past_minute",
+      "value": 12,
+      "unit": "steps"
+    }
+  ]
+}

@@ -170,12 +170,20 @@ Synthesize insights across modalities to identify complex patterns:
 After completing your analysis, you MUST respond with ONLY a valid JSON object in this exact format:
 {{
   "score": <integer from 1-10>,
-  "reasoning": "<your complete compositional chain-of-thought analysis above, including all phases, assessment, factors, and personalized feedback>"
+  "reasoning": "<BRIEF and CONCISE summary of your analysis>"
 }}
 
 Where:
 - score: 1-10 integer representing concentration level (1=very poor, 10=excellent)
-- reasoning: Your full analysis text following the compositional chain-of-thought format above
+- reasoning: A CONCISE 3-5 sentence summary covering:
+  1) Key sensor observations (heart rate, noise, movement patterns)
+  2) Main correlations between sensors
+  3) Overall concentration assessment with primary factors
+  4) Top 2-3 actionable recommendations
+  
+Example format: "Heart rate averaged X bpm with spike at TIME. Noise peaked at Y dB correlating with movement increase, indicating environmental disruption. Concentration is LEVEL due to FACTORS. Recommendations: 1) ACTION, 2) ACTION."
+
+Keep it brief and actionable - do NOT include the full phase-by-phase analysis in the reasoning field.
 
 Do not include any text outside the JSON object."""
     
@@ -194,20 +202,34 @@ Do not include any text outside the JSON object."""
         result = session.sql(query).collect()
         if result:
             response_text = result[0]['RESPONSE']
-            # Parse JSON response
+            # Parse JSON response - handle escaped strings
             try:
+                # First, try direct JSON parse
                 response_json = json.loads(response_text)
                 return {
                     'score': response_json.get('score'),
                     'reasoning': response_json.get('reasoning')
                 }
             except json.JSONDecodeError:
-                # Fallback if response is not JSON
-                return {
-                    'score': None,
-                    'reasoning': response_text,
-                    'error': 'Response was not valid JSON'
-                }
+                # The response might be an escaped JSON string - try to unescape it
+                try:
+                    # Remove outer quotes if present and decode escape sequences
+                    if response_text.startswith('"') and response_text.endswith('"'):
+                        response_text = response_text[1:-1]
+                    # Decode common escape sequences
+                    unescaped = response_text.replace('\\n', '\n').replace('\\"', '"').replace('\\\\', '\\')
+                    response_json = json.loads(unescaped)
+                    return {
+                        'score': response_json.get('score'),
+                        'reasoning': response_json.get('reasoning')
+                    }
+                except (json.JSONDecodeError, ValueError, AttributeError):
+                    # Final fallback - response is not valid JSON
+                    return {
+                        'score': None,
+                        'reasoning': response_text,
+                        'error': 'Response was not valid JSON'
+                    }
         return {'score': None, 'reasoning': "[ERROR] No response from model"}
     except Exception as e:
         return {'score': None, 'reasoning': f"[ERROR] {str(e)}"}
